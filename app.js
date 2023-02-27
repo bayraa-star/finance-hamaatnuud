@@ -1,5 +1,25 @@
 //Дэлгэцтэй ажиллах удирдлага
-var uiController = (function () {})();
+var uiController = (function () {
+  var DOMstrings = {
+    inputType: ".add__type",
+    inputDescription: ".add__description",
+    inputValue: ".add__value",
+    addBtn: ".add__btn",
+  };
+  return {
+    getInput: function () {
+      return {
+        type: document.querySelector(DOMstrings.inputType).value,
+        decription: document.querySelector(DOMstrings.inputDescription).value,
+        value: document.querySelector(DOMstrings.inputValue).value,
+      };
+    },
+
+    getDOMstrings: function () {
+      return DOMstrings;
+    },
+  };
+})();
 
 //Санхүүтэй ажиллах удирдлага
 var financeController = (function () {})();
@@ -8,7 +28,7 @@ var financeController = (function () {})();
 var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
-    console.log("Дэлгэцээс өгөгдлөө авах хэсэг.");
+    console.log(uiController.getInput());
     // 2. Олж авсан өгөгдлүүдээ санхүүгийн удирдлагад дамжуулж, тэнд хадгална.
     console.log("Олж авсан өгөгдлүүдээ санхүүгийн удирдлагад дамжуулах хэсэг");
     // 3. Олж авсан өгөгдлүүдийг веб дээрээ тохирох хэсэгт нь гаргана.
@@ -21,13 +41,26 @@ var appController = (function (uiController, financeController) {
     console.log("Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргах хэсэг");
   };
 
-  document.querySelector(".add__btn").addEventListener("click", function () {
-    ctrlAddItem();
-  });
+  var setupEvenListeners = function () {
+    var DOM = uiController.getDOMstrings();
 
-  document.addEventListener("keypress", function (event) {
-    if (event.keyCode === 13 || event.which === 13) {
+    document.querySelector(DOM.addBtn).addEventListener("click", function () {
       ctrlAddItem();
-    }
-  });
+    });
+
+    document.addEventListener("keypress", function (event) {
+      if (event.keyCode === 13 || event.which === 13) {
+        ctrlAddItem();
+      }
+    });
+  };
+
+  return {
+    init: function () {
+      console.log("Application started!!!");
+      setupEvenListeners();
+    },
+  };
 })(uiController, financeController);
+
+appController.init();
