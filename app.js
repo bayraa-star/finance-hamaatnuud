@@ -120,19 +120,22 @@ var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
     var input = uiController.getInput();
-    // 2. Олж авсан өгөгдлүүдээ санхүүгийн удирдлагад дамжуулж, тэнд хадгална.
-    var item = financeController.addItem(
-      input.type,
-      input.description,
-      input.value
-    );
-    // 3. Олж авсан өгөгдлүүдийг веб дээрээ тохирох хэсэгт нь гаргана.
-    uiController.addListItem(item, input.type);
-    uiController.clearFields();
-    // 4. Төсвийг тооцоолно
-    console.log("Төсвийг тооцоолох хэсэг");
-    // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
-    console.log("Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргах хэсэг");
+
+    if (input.description !== "" && input.value !== "") {
+      // 2. Олж авсан өгөгдлүүдээ санхүүгийн удирдлагад дамжуулж, тэнд хадгална.
+      var item = financeController.addItem(
+        input.type,
+        input.description,
+        input.value
+      );
+      // 3. Олж авсан өгөгдлүүдийг веб дээрээ тохирох хэсэгт нь гаргана.
+      uiController.addListItem(item, input.type);
+      uiController.clearFields();
+      // 4. Төсвийг тооцоолно
+      console.log("Төсвийг тооцоолох хэсэг");
+      // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
+      console.log("Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргах хэсэг");
+    }
   };
 
   var setupEventListeners = function () {
