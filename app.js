@@ -61,6 +61,11 @@ var uiController = (function () {
       }
     },
 
+    deleteListItem: function (id) {
+      var el = document.getElementById(id);
+      el.parentNode.removeChild(el);
+    },
+
     addListItem: function (item, type) {
       //Орлого зарлагын элементийг агуулсан html ийг бэлтгэнэ.
       var html, list;
@@ -147,11 +152,10 @@ var financeController = (function () {
       var ids = data.items[type].map(function (el) {
         return el.id;
       });
-      console.log("ids: " + ids);
+
       var index = ids.indexOf(id);
-      console.log("index: " + index);
+
       if (index !== -1) {
-        console.log("ustah");
         data.items[type].splice(index, 1);
       }
     },
@@ -229,11 +233,10 @@ var appController = (function (uiController, financeController) {
           var type = arr[0];
           var itemId = parseInt(arr[1]);
 
-          console.log(type + " ===> " + itemId);
-
           //1. Санхүүгийн модулиас type, id ашиглаад устгаж өгнө.
           financeController.deleteItem(type, itemId);
           //2. Дэлгэц дээрээс энэ элементийг устгана.
+          uiController.deleteListItem(id);
           //3. Үлдэгдэл тооцоог шинэчилж харуулна.
         }
       });
