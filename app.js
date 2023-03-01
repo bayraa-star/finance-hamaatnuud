@@ -57,7 +57,7 @@ var uiController = (function () {
           tusuv.huvi;
       } else {
         document.querySelector(DOMstrings.percentageLabel).textContent =
-          tusuv.huvi + "%";
+          tusuv.huvi + " % ";
       }
     },
 
@@ -101,6 +101,17 @@ var financeController = (function () {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
+  };
+
+  Expense.prototype.calcPercentage = function (totalInc) {
+    if (totalInc > 0)
+      this.percentage = Math.round((this.value / totalInc) * 100);
+    else this.percentage = 0;
+  };
+
+  Expense.prototype.getPercentage = function () {
+    return this.percentage;
   };
 
   var calculateTotal = function (type) {
@@ -135,8 +146,22 @@ var financeController = (function () {
       calculateTotal("exp");
 
       data.tusuv = data.totals.inc - data.totals.exp;
+      if (data.inc > 0)
+        data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+      else data.huvi = 0;
+    },
 
-      data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+    calcPercentages: function () {
+      data.items.exp.forEach(function (el) {
+        el.calcPercentage(data.totals.inc);
+      });
+    },
+
+    getPercentages: function () {
+      var allPercentages = data.items.exp.map(function (el) {
+        return el.getPercentage();
+      });
+      return allPercentages;
     },
 
     tusviigAvah: function () {
@@ -201,13 +226,25 @@ var appController = (function (uiController, financeController) {
       // 3. Олж авсан өгөгдлүүдийг веб дээрээ тохирох хэсэгт нь гаргана.
       uiController.addListItem(item, input.type);
       uiController.clearFields();
-      // 4. Төсвийг тооцоолно
-      financeController.tusuvTootsooloh();
-      // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
-      var tusuv = financeController.tusviigAvah();
-      // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
-      uiController.tusviigUzuuleh(tusuv);
+
+      updateTusuv();
     }
+  };
+
+  var updateTusuv = function () {
+    // 4. Төсвийг тооцоолно
+    financeController.tusuvTootsooloh();
+    // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
+    var tusuv = financeController.tusviigAvah();
+    // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
+    uiController.tusviigUzuuleh(tusuv);
+
+    // 7. Элементүүдийн хувийг тооцоолно
+    financeController.calcPercentages();
+    // 8. Элементүүдийн хувийг хүлээж авна.
+    var allPercentages = financeController.getPercentages();
+    // 9. Эдгээр хувийг дэлгэцэнд гаргана.
+    console.log(allPercentages);
   };
 
   var setupEventListeners = function () {
@@ -238,6 +275,7 @@ var appController = (function (uiController, financeController) {
           //2. Дэлгэц дээрээс энэ элементийг устгана.
           uiController.deleteListItem(id);
           //3. Үлдэгдэл тооцоог шинэчилж харуулна.
+          updateTusuv();
         }
       });
   };
